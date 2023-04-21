@@ -1,44 +1,90 @@
-import { useEffect ,Fragment} from 'react';
-import { useSelector,useDispatch } from 'react-redux';
-import Cart from './components/Cart/Cart';
-import Layout from './components/Layout/Layout';
-import Products from './components/Shop/Products';
-import { uiActions } from './components/store/UI-slice';
-import Notification from './components/UI/Notification';
-let isInitial=true;
+import './App.css';
+import { useStateContext } from './store/StateContext';
+import { Routes, Route, Navigate} from 'react-router-dom';
+
+import Home from './pages/Home';
+import About from './pages/About';
+import Store from './pages/Store';
+import Contact from './pages/Contact';
+import ProductDetail from './components/ProductDetail';
+import Login from './pages/Login';
+import Header from './components/Header';
+import Signup from './pages/Signup';
 function App() {
- const showCart= useSelector(state => state.ui.cartIsVisibale);
- const cart=useSelector((state) => state.cart);
+  const cxt=useStateContext();
 
- const notification=useSelector(state => state.ui.notification);
- useEffect(()=>{
-
-  const sendCrtData=async()=>{
-    dispatch(uiActions,showNotification({
-      status : 'pending',
-      message :'sending cart data',
-    }));
-  const response=await fetch('https://react-http-8dfe4-default-rtdb.firebaseio.com/cart.json',{method : 'PUT',body: JSON.stringify(cart),}); 
- if(!response.ok)
-{
-  throw new Error('sending cart data failed');
-} 
  
-  dispatch(uiActions,showNotification({
-    status : 'success',
-    message :'sent cart data',
-  }));
-
-};
- },[cart])
   return (
-    <Fragment>
-     {notification &&  <Notification status={notification.status} message={notification.message}/>}
-    <Layout>
-      {showCart && <Cart />}
-      <Products />
-    </Layout>
-    </Fragment>
+    <div className="App">
+      <Routes>
+        <Route path='/' exact
+         element={ <Home />}
+         />
+        <Route path='/About' exact
+         element={ <About />}
+          // {cxt.isLogin && <Navigate to='/profile'/>}
+        />
+        <Route path='/Store' exact
+         element={<>{cxt.isLogin && <Store/>}{!cxt.isLogin && <Navigate to='/Login'/>}</>}
+         />
+        <Route path='/Contact' exact
+        element={<Contact/>}
+        />
+           <Route path='/Login' exact
+          element={<>{!cxt.isLogin && <Login/>} {cxt.isLogin && <Navigate to='/Store'/>}</>}
+          />
+          <Route path='/Store/:id' exact
+          element={<ProductDetail/>}/>
+          <Route path='/Signup' exact
+          element={<><Signup/>{cxt.signup && <Navigate to='/Login'/>}</>}
+          />
+      </Routes>
+    </div>
+  );
+}
+
+export default App;import './App.css';
+import { useStateContext } from './store/StateContext';
+import { Routes, Route, Navigate} from 'react-router-dom';
+
+import Home from './pages/Home';
+import About from './pages/About';
+import Store from './pages/Store';
+import Contact from './pages/Contact';
+import ProductDetail from './components/ProductDetail';
+import Login from './pages/Login';
+import Header from './components/Header';
+import Signup from './pages/Signup';
+function App() {
+  const cxt=useStateContext();
+
+ 
+  return (
+    <div className="App">
+      <Routes>
+        <Route path='/' exact
+         element={ <Home />}
+         />
+        <Route path='/About' exact
+         element={ <About />}
+          // {cxt.isLogin && <Navigate to='/profile'/>}
+        />
+        <Route path='/Store' exact
+         element={<>{cxt.isLogin && <Store/>}{!cxt.isLogin && <Navigate to='/Login'/>}</>}
+         />
+        <Route path='/Contact' exact
+        element={<Contact/>}
+        />
+           <Route path='/Login' exact
+          element={<>{!cxt.isLogin && <Login/>} {cxt.isLogin && <Navigate to='/Store'/>}</>}
+          />
+          <Route path='/Store/:id' exact
+          element={<ProductDetail/>}/>
+          <Route path='/Signup' exact
+          element={<><Signup/>{cxt.signup && <Navigate to='/Login'/>}</>}
+          />
+      </Routes>
+    </div>
   );
 }
 
